@@ -1,36 +1,41 @@
 const decodeTheRing = function (s, p) {
-
-     const m = s.length;
-    const p = p.length;
-
-  
-    const dp = Array(m + 1).fill(false).map(() => Array(p + 1).fill(false));
-
- 
-    dp[0][0] = true;
-
-  
-    for (let j = 1; j <= p; j++) {
-        if (p[j - 1] === '*') {
-            dp[0][j] = dp[0][j - 1];
+  let message=s;
+     let pattern=p;
+  let i = 0;  
+    let j = 0; 
+    let starIndex = -1; 
+    let matchIndex = -1;  
+    while (i < message.length) {
+      
+        if (j < pattern.length && (pattern[j] === message[i] || pattern[j] === '?')) {
+            i++;
+            j++;
         }
-    }
-
-  
-    for (let i = 1; i <= m; i++) {
-        for (let j = 1; j <= p; j++) {
-            if (p[j - 1] === s[i - 1] || p[j - 1] === '?') {
-               
-                dp[i][j] = dp[i - 1][j - 1];
-            } else if (p[j - 1] === '*') {
-              
-                dp[i][j] = dp[i][j - 1] || dp[i - 1][j];
-            }
+       
+        else if (j < pattern.length && pattern[j] === '*') {
+            starIndex = j; 
+            matchIndex = i;  
+            j++;  
+        }
+     
+        else if (starIndex !== -1) {
+            j = starIndex + 1;  
+            matchIndex++;  
+            i = matchIndex; 
+        }
+     
+        else {
+            return false;
         }
     }
 
     
-    return dp[m][p];
+    while (j < pattern.length && pattern[j] === '*') {
+        j++;
+    }
+
+  
+    return j === pattern.length;
 
   };
   
